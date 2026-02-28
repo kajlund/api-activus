@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
+import { rateLimit } from "express-rate-limit";
 import httpLogger from "pino-http";
 
 import { getRouter } from "./router.js";
@@ -30,6 +31,17 @@ export function getApp(cnf, log) {
       credentials: true, // Set to true for cookies/sessions
     }),
   );
+
+  const limiter = rateLimit({
+    windowMs: 5 * 60 * 1000, // per 5 mins
+    limit: 100, // Limit each IP to 100 requests.
+    message: { error: "Too many requests, please try again later." },
+    standardHeaders: true,
+    legacyHeaders: false,
+    // store: ... , // Redis, Memcached, etc.
+  });
+
+  app.use(limiter); // Apply the rate limiting middleware to all requests
 
   // Logging Middleware
   if (cnf.logHttp) {
