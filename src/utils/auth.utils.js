@@ -1,10 +1,10 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 export function getAuthUtils(cnf, log) {
   return {
     verifyAccessToken: (token) => {
       try {
-        const decoded = jwt.decode(token, cnf.accessTokenSecret);
+        const decoded = jwt.verify(token, cnf.accessTokenSecret);
         return decoded;
       } catch (err) {
         log.error(err);
