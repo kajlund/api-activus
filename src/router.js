@@ -1,5 +1,6 @@
 import express from "express";
 
+import { getActivityRoutes } from "./api/activities/activity.routes.js";
 import { getActivityKindRoutes } from "./api/activitykinds/activitykind.routes.js";
 import { getAuthRoutes } from "./api/auth/auth.routes.js";
 
@@ -21,9 +22,10 @@ export function getRouter(cnf, log) {
     ],
   };
 
+  const activityRoutes = getActivityRoutes(cnf, log);
   const kindRoutes = getActivityKindRoutes(cnf, log);
   const authRoutes = getAuthRoutes(cnf, log);
-  const routeGroups = [sharedRoutes, kindRoutes, authRoutes];
+  const routeGroups = [sharedRoutes, activityRoutes, kindRoutes, authRoutes];
 
   const router = express.Router();
 
