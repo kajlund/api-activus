@@ -1,48 +1,40 @@
-import { createId } from '@paralleldrive/cuid2';
-import {
-  pgTable,
-  index,
-  text,
-  timestamp,
-  varchar,
-  integer,
-  real,
-} from 'drizzle-orm/pg-core';
+import { createId } from "@paralleldrive/cuid2";
+import { pgTable, index, text, timestamp, varchar, integer, real } from "drizzle-orm/pg-core";
 
 const timestamps = {
-  createdAt: timestamp('createdAt', { precision: 3, mode: 'string' })
+  createdAt: timestamp("createdAt", { precision: 3, mode: "string", withTimezone: true })
     .notNull()
     .defaultNow(),
-  updatedAt: timestamp('updatedAt', { precision: 3, mode: 'string' })
+  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string", withTimezone: true })
     .notNull()
     .defaultNow(),
 };
 
-export const activityKinds = pgTable('ActivityKinds', {
+export const activityKinds = pgTable("ActivityKinds", {
   id: varchar()
     .primaryKey()
     .$defaultFn(() => createId()),
   name: varchar().notNull().unique(),
-  iconName: varchar().notNull().default(''),
-  description: varchar().notNull().default(''),
+  iconName: varchar().notNull().default(""),
+  description: varchar().notNull().default(""),
   ...timestamps,
 });
 
 export const activities = pgTable(
-  'Activities',
+  "Activities",
   {
-    id: varchar('id')
+    id: varchar("id")
       .primaryKey()
       .$defaultFn(() => createId()),
-    userId: varchar('userId').notNull().default(''),
-    when: timestamp('when', { precision: 3, mode: 'string' })
+    userId: varchar("userId").notNull().default(""),
+    when: timestamp("when", { precision: 3, mode: "string", withTimezone: true })
       .notNull()
       .defaultNow(),
-    kindId: varchar('kindId')
+    kindId: varchar("kindId")
       .notNull()
       .references(() => activityKinds.id),
-    title: varchar().notNull().default(''),
-    description: text().notNull().default(''),
+    title: varchar().notNull().default(""),
+    description: text().notNull().default(""),
     distance: real().notNull().default(0),
     duration: integer().notNull().default(0),
     elevation: integer().notNull().default(0),
@@ -50,8 +42,8 @@ export const activities = pgTable(
     ...timestamps,
   },
   (table) => [
-    index('activities_when_idx').on(table.when),
-    index('activities_userId_idx').on(table.userId),
+    index("activities_when_idx").on(table.when),
+    index("activities_userId_idx").on(table.userId),
   ],
 );
 
