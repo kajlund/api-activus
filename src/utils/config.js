@@ -17,7 +17,9 @@ function fromEnv(env = process.env) {
     dbUrl: env.DATABASE_URL,
     accessTokenSecret: env.ACCESS_TOKEN_SECRET,
     allowedOrigins: env.ALLOWED_ORIGINS
-      ? env.ALLOWED_ORIGINS.split(",").map((s) => s.trim())
+      ? env.ALLOWED_ORIGINS.split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
       : undefined,
     authUrl: process.env.AUTH_URL,
   };
@@ -30,8 +32,8 @@ const validator = vine.create({
   logHttp: vine.boolean(),
   dbUrl: vine.string().trim().minLength(20),
   accessTokenSecret: vine.string().trim().minLength(25),
-  allowedOrigins: vine.array(vine.string().trim().url()).minLength(1),
-  authUrl: vine.string().trim(),
+  allowedOrigins: vine.array(vine.string().trim().url({ require_tld: false })).minLength(1),
+  authUrl: vine.string().trim().url({ require_tld: false }),
 });
 
 function deepFreeze(obj) {
